@@ -1,0 +1,20 @@
+#!/bin/bash +x
+########################################################
+##### Date 20-01-23 Mysql Incremental backup script#####
+########################################################
+#HOST="dev"
+DIR=`/bin/ls -al /home/nginx/mysql/ | grep 'backup' | wc -l`
+if [ "$DIR" -eq '1' ] # check backup directory if not available then create
+then
+/bin/echo "Storage available in home"  >> /home/nginx/mysql/backup/daily.log
+else
+`/bin/mkdir /home/nginx/mysql/backup/; /bin/mkdir /home/nginx/mysql/backup/mysql/`; /bin/echo "Storage created in home" >> /home/nginx/mysql/backup/daily_backup.log
+fi
+# print current date to file daily_backup.log
+date >> /home/nginx/mysql/backup/daily_backup.log
+date >> /home/nginx/mysql/backup/error_backup.log
+# start incremental backup with rsync 
+rsync -av /var/lib/mysql/ /home/nginx/mysql/backup/mysql/. > /home/nginx/mysql/backup/backup.log
+#show backup log file
+cat /home/nginx/mysql/backup/backup.log >> /home/nginx/mysql/backup/mysql/daily_backup.log
+#mail -s "Daily incremental backup $HOST on home" gulab.singh@zengroup.co.in < /home/backup/backup.log
