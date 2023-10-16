@@ -1,0 +1,26 @@
+#!/bin/bash +x
+###########################################
+##                                        #
+##   Mysql Database Backup Script         #
+##   Update on: Jan 10, 2023              # 
+##                                        #
+###########################################
+
+today=$(date +"%d-%m-%Y")  #create current date diretory  for backup
+
+mkdir $today
+
+cd $today
+
+MYSQL_USER='root'
+MYSQL_PASS='root'
+
+DATABASES=$(mysql -u ${MYSQL_USER} --password=${MYSQL_PASS} -e "SHOW DATABASES;" | awk '{print $1}' | grep -Ev "(Database|information_schema|mysql|sys|performance_schema)")
+
+#echo $DATABASES;
+
+for DB in ${DATABASES};
+do
+mysqldump -u ${MYSQL_USER} --password=${MYSQL_PASS} $DB > "$DB.sql";
+sleep 2;
+done
